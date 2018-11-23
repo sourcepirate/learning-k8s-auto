@@ -1,0 +1,4 @@
+.terraform
+*.log
+.DS_Store
+.vscode
