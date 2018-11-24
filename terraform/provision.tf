@@ -26,7 +26,7 @@ data "template_file" "worker_csr" {
   # count    = "${length(aws_instance.worker.*.id)}"
   count = "${var.worker_count}"
 
-  template = "${file("../tls/worker-csr.tpl.json")}"
+  template = "${file("tls/worker-csr.tpl.json")}"
 
   vars = {
     # instance_hostname = "${element(split(".", aws_instance.worker.*.private_dns[count.index]), 0)}"
@@ -67,22 +67,43 @@ EOF
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${tls_private_key.k8s.private_key_pem}"
+    private_key = "${tls_private_key.cluster_key.private_key_pem}"
   }
 
   provisioner "file" {
     source      = "tls/ca.pem"
     destination = "/home/ubuntu/ca.pem"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${tls_private_key.cluster_key.private_key_pem}"
+      host        = "${aws_instance.workers.*.public_ip[count.index]}"
+    }
   }
 
   provisioner "file" {
     source      = "tls/worker-${count.index}-key.pem"
     destination = "worker-${count.index}-key.pem"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${tls_private_key.cluster_key.private_key_pem}"
+      host        = "${aws_instance.workers.*.public_ip[count.index]}"
+    }
   }
 
   provisioner "file" {
     source      = "tls/worker-${count.index}.pem"
     destination = "worker-${count.index}.pem"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${tls_private_key.cluster_key.private_key_pem}"
+      host        = "${aws_instance.workers.*.public_ip[count.index]}"
+    }
   }
 }
 
@@ -113,7 +134,7 @@ resource "null_resource" "tls_kubernetes" {
 cfssl gencert \
   -ca=tls/ca.pem -ca-key=tls/ca-key.pem \
   -config=tls/ca-config.json \
-  -hostname=10.32.0.1,${join(",", aws_instance.masters.*.private_ip)},${join(",", local.controller_hostnames)},${aws_lb.kubernetes_loadbalancer.dns_name},127.0.0.1,kubernetes.default \
+  -hostname=10.32.0.1,${join(",", aws_instance.masters.*.public_ip)},${join(",", local.controller_hostnames)},${aws_lb.kubernetes_loadbalancer.dns_name},127.0.0.1,kubernetes.default \
   -profile=kubernetes \
   tls/kubernetes-csr.json \
   | cfssljson -bare tls/kubernetes
@@ -134,26 +155,54 @@ resource "null_resource" "tls_controller" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${tls_private_key.k8s.private_key_pem}"
+    private_key = "${tls_private_key.cluster_key.private_key_pem}"
   }
 
   provisioner "file" {
     source      = "tls/ca.pem"
     destination = "/home/ubuntu/ca.pem"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${tls_private_key.cluster_key.private_key_pem}"
+      host        = "${aws_instance.masters.*.public_ip[count.index]}"
+    }
   }
 
   provisioner "file" {
     source      = "tls/ca-key.pem"
     destination = "/home/ubuntu/ca-key.pem"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${tls_private_key.cluster_key.private_key_pem}"
+      host        = "${aws_instance.masters.*.public_ip[count.index]}"
+    }
   }
 
   provisioner "file" {
     source      = "tls/kubernetes-key.pem"
     destination = "/home/ubuntu/kubernetes-key.pem"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${tls_private_key.cluster_key.private_key_pem}"
+      host        = "${aws_instance.masters.*.public_ip[count.index]}"
+    }
   }
 
   provisioner "file" {
     source      = "tls/kubernetes.pem"
     destination = "/home/ubuntu/kubernetes.pem"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${tls_private_key.cluster_key.private_key_pem}"
+      host        = "${aws_instance.masters.*.public_ip[count.index]}"
+    }
   }
 }
