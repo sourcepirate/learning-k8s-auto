@@ -18,6 +18,10 @@ variable "master_count" {
   default = 1
 }
 
+variable "etcd_count" {
+  default = 1
+}
+
 variable "type" {
   default = "t2.micro"
 }

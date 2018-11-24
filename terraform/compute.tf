@@ -28,6 +28,21 @@ resource "aws_instance" "workers" {
   }
 }
 
+resource "aws_instance" "etcds" {
+  count                       = "${var.etcd_count}"
+  ami                         = "${data.aws_ami.ubuntu.id}"
+  instance_type               = "${var.type}"
+  vpc_security_group_ids      = ["${aws_security_group.kube_rules.id}"]
+  subnet_id                   = "${aws_subnet.kubernetes_subnet.id}"
+  key_name                    = "${aws_key_pair.cluster_key.key_name}"
+  source_dest_check           = true
+  associate_public_ip_address = true
+
+  tags {
+    Name = "${var.cluster}-etcd-${count.index}"
+  }
+}
+
 locals {
   worker_hostnames     = "${split(",", replace(join(",", aws_instance.workers.*.private_dns), ".${var.region}.compute.internal", ""))}"
   controller_hostnames = "${split(",", replace(join(",", aws_instance.masters.*.private_dns), ".${var.region}.compute.internal", ""))}"
@@ -35,4 +50,6 @@ locals {
   master_ips = ["${aws_instance.masters.*.private_ip}"]
 
   worker_ips = ["${aws_instance.workers.*.private_ip}"]
+
+  etcds = ["${aws_instance.etcds.*.private_ip}"]
 }
