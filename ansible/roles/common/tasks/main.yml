@@ -1,0 +1,15 @@
+
+- name: copy ca certificate keys
+  copy:
+    src: ../../../../gen_certs/ca.pem
+    dest: /home/ubuntu/ca.pem
+
+- name: copy kubernetes certificate keys
+  copy:
+    src: ../../../../gen_certs/kubernetes.pem
+    dest: /home/ubuntu/kubernetes.pem
+
+- name: copy kubernetes master cerificate keys
+  copy:
+    src: ../../../../gen_certs/kubernetes-key.pem
+    dest: /home/ubuntu/kubernetes-key.pem

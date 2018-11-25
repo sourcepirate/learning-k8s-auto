@@ -1,0 +1,12 @@
+
+- hosts: masters
+  sudo: true
+  roles:
+    - common
+    - master
+
+# - hosts: etcd  
+#   sudo: true
+#   roles:
+#     - common
+#     - etcd

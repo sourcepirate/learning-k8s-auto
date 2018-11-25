@@ -2,3 +2,6 @@
 *.log
 .DS_Store
 .vscode
+venv
+*.pem
+gen_certs

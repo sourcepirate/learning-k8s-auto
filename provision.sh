@@ -1,9 +1,16 @@
 #!/bin/bash
 
-cfssl gencert -initca tls/ca-csr.json | cfssljson -bare tls/ca
+pip install jinja2
+cfssl gencert -initca certificates/ca-csr.json | cfssljson -bare gen_certs/ca
+
+python scripts/build-certificates.py
 cfssl gencert \
-  -ca=tls/ca.pem \
-  -ca-key=tls/ca-key.pem \
-  -config=tls/ca-config.json \
-  -profile=kubernetes \
-  tls/admin-csr.json | cfssljson -bare tls/admin
+-ca=gen_certs/ca.pem \
+-ca-key=gen_certs/ca-key.pem \
+-config=certificates/ca-config.json \
+-profile=kubernetes \
+gen_certs/kubernetes-csr.json | cfssljson -bare gen_certs/kubernetes
+
+master_count=$1
+worker_count=$2
+etcd_count=$3
