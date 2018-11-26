@@ -49,7 +49,7 @@
 - name: enable systemd service
   sudo: true
   systemd:
-    state: started
+    state: restarted
     name: kube-apiserver
   ignore_errors: yes
 
@@ -62,7 +62,7 @@
 - name: enable kube controller manager service
   sudo: true
   systemd:
-    state: started
+    state: restarted
     name: kube-controller-manager
   ignore_errors: yes
 
@@ -75,7 +75,7 @@
 - name: enable kube scheduler
   sudo: true
   systemd:
-    state: started
+    state: restarted
     name: kube-scheduler
   ignore_errors: yes
 

@@ -64,5 +64,5 @@
 
 - name: confirm nodes are alive.
   sudo: true
-  shell: etcdctl --ca-file=/etc/etcd/ca.pem cluster-health
+  shell: etcdctl --endpoints={{ internal_ip.stdout }} cluster-health
   ignore_errors: yes
