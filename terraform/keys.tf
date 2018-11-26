@@ -1,9 +1,4 @@
-resource "tls_private_key" "cluster_key" {
-  algorithm = "RSA"
-  rsa_bits  = "2048"
-}
-
 resource "aws_key_pair" "cluster_key" {
   key_name   = "kubernetes"
-  public_key = "${tls_private_key.cluster_key.public_key_openssh}"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBev7sXI3TWDWE/8rCGeCEIwSvyqskr1wdRrzUxpwZlttBg+Dxb1GR6XxZYRTqDNDimAnotC+VyXjTuPxounYTN9gKtGpNyMRrMfMrOOr0L4XMY1hyuhA5TVGaFO64rA6L9Jc09Q8RzvPeqWbwp7DrIstLqpSlXLW2YOrOhLicLCjl6tI6uuzBJK2pejy3ju4sR9Ec/1YpHlXXeV/QrRp4DdbogBaeZNBtKDRjXGsOVP27si5qXsMYmj91ylInl+iNyNhxXCy5MdniCAKic70cY2bM4pEfdBnzxxK2XTTQiT7wI+sN7mB/R7McrhraEsJGG/z1/3VMnD4wHQxkgah1 plasmashadow@plasmashadows-MacBook-Pro.local"
 }

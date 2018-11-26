@@ -1,0 +1,85 @@
+- name: "create new var lib directory"
+  sudo: true
+  file: path=/var/lib/kubernetes state=directory
+
+- name: "getting the internal ip"
+  command: curl -s http://169.254.169.254/latest/meta-data/local-ipv4
+  register: internal_ip
+
+- name: "copy key files"
+  sudo: true
+  copy: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: "../../../../gen_certs/kubernetes.pem", dest: "/var/lib/kubernetes/kubernetes.pem"}
+    - { src: "../../../../gen_certs/kubernetes-key.pem", dest: "/var/lib/kubernetes/kubernetes-key.pem"}
+    - { src: "../../../../gen_certs/ca.pem", dest: "/var/lib/kubernetes/ca.pem" }
+
+- name: download binaries to /tmp
+  sudo: true
+  get_url: url={{ item }} dest=/usr/bin mode=+x
+  with_items:
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kube-apiserver"
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kube-controller-manager"
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kube-scheduler"
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kubectl"
+
+- name: api server token setup
+  sudo: true
+  get_url:
+    url: https://raw.githubusercontent.com/DaspawnW/kubernetes-the-hard-way-aws/master/token.csv
+    dest: /var/lib/kubernetes/
+    
+- name: api server auth policy setup
+  sudo: true
+  get_url:
+    url: https://raw.githubusercontent.com/kelseyhightower/kubernetes-the-hard-way/997152b9ee3119ab2a3af39a0fea08c746b1bad8/authorization-policy.jsonl
+    dest: /var/lib/kubernetes/
+
+- name: apply template file
+  sudo: true
+  template:
+    src: kube-apiserver.service.jinja2
+    dest: /etc/systemd/system/kube-apiserver.service
+
+- name: reload deamon
+  sudo: true
+  systemd:
+    daemon_reload: yes
+
+- name: enable systemd service
+  sudo: true
+  systemd:
+    state: started
+    name: kube-apiserver
+  ignore_errors: yes
+
+- name:  "apply kube controller manager template"
+  sudo: true
+  template:
+    src: kube-controller-manager.service.jinja2
+    dest: /etc/systemd/system/kube-controller-manager.service
+
+- name: enable kube controller manager service
+  sudo: true
+  systemd:
+    state: started
+    name: kube-controller-manager
+  ignore_errors: yes
+
+- name: copy kube scheduler
+  sudo: true
+  template:
+    src: kube-scheduler.service.jinja2
+    dest: /etc/systemd/system/kube-scheduler.service
+
+- name: enable kube scheduler
+  sudo: true
+  systemd:
+    state: started
+    name: kube-scheduler
+  ignore_errors: yes
+
+
+
+
+
