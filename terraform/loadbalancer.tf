@@ -12,7 +12,7 @@ resource "aws_lb" "kubernetes_loadbalancer" {
 resource "aws_lb_target_group" "kubernetes_lb_group" {
   name        = "${var.cluster}-lbgroup"
   protocol    = "TCP"
-  port        = 6443
+  port        = 8080
   vpc_id      = "${aws_vpc.kubernetes.id}"
   target_type = "ip"
 }
@@ -20,7 +20,7 @@ resource "aws_lb_target_group" "kubernetes_lb_group" {
 resource "aws_lb_listener" "kubernetes_listener" {
   load_balancer_arn = "${aws_lb.kubernetes_loadbalancer.arn}"
   protocol          = "TCP"
-  port              = 6443
+  port              = 80
 
   default_action {
     type             = "forward"

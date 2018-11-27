@@ -1,0 +1,70 @@
+- name: install docker
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - software-properties-common
+    update_cache: yes
+
+- name: download ubuntu shell
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+- name: apt-add-repo
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu xenial stable
+    state: present
+
+- name: apt install docker
+  apt: 
+    name: docker-ce
+    update_cache: yes
+
+- name: start docker deamon
+  systemd:
+    name: docker
+    state: started
+
+- name: "create new opt cni directory"
+  sudo: true
+  file: path=/opt/cni state=directory
+
+- name: create var lib kubernetes directory
+  sudo: true
+  file: path=/var/lib/kubernetes state=directory
+
+- name: create var lib kubelet directory
+  sudo: true
+  file: path=/var/lib/kubelet state=directory
+
+- name: download kublet
+  sudo: true
+  unarchive:
+    src: https://storage.googleapis.com/kubernetes-release/network-plugins/cni-c864f0e1ea73719b8f4582402b0847064f9883b0.tar.gz
+    dest: /opt/cni
+    remote_src: yes
+
+- name: download binaries
+  sudo: true
+  get_url: url={{item}} dest=/usr/bin/ mode="+x"
+  with_items:
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kubectl"
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kube-proxy"
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kubelet"
+
+- name: apply kubelet template
+  sudo: true
+  template: src=kubeconfig.jinja2 dest=/var/lib/kubelet/kubeconfig
+
+- name: apply kubelete service template
+  sudo: true
+  template: src=kubelet.service.jinja2 dest=/etc/systemd/system/kubelet.service
+
+- name: apply kube proxy template
+  sudo: true
+  template: src=kube-proxy.service.jinja2 dest=/etc/systemd/system/kube-proxy.service
+
+- name: enable and start kubelet service
+  systemd: name={{ item.name }} state=started
+  with_items: 
+    - { name: "kubelet"}
+    - { name: "kube-proxy"}
