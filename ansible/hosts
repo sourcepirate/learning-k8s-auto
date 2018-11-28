@@ -1,5 +1,5 @@
 [masters]
-18.212.3.84
+34.229.68.8
 
 [masters:vars]
 ansible_ssh_private_key_file=id_rsa
@@ -7,7 +7,7 @@ ansible_user=ubuntu
 ansible_python_interpreter=/usr/bin/python3
 
 [etcd]
-54.175.253.38
+35.168.1.240
 
 [etcd:vars]
 ansible_ssh_private_key_file=id_rsa
@@ -15,3 +15,13 @@ ansible_user=ubuntu
 ansible_python_interpreter=/usr/bin/python3
 
 [workers]
+100.26.169.234
+54.84.62.106
+
+[workers:vars]
+ansible_ssh_private_key_file=id_rsa
+ansible_user=ubuntu
+ansible_python_interpreter=/usr/bin/python3
+
+[defaults]
+host_key_checking = False

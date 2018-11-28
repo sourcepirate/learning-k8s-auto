@@ -64,5 +64,5 @@
 
 - name: confirm nodes are alive.
   sudo: true
-  shell: etcdctl --endpoints={{ internal_ip.stdout }} cluster-health
+  shell: etcdctl --endpoints=http://{{ internal_ip.stdout }}:2379 cluster-health
   ignore_errors: yes

@@ -18,6 +18,7 @@ ExecStart=/usr/bin/kubelet \
   --kubeconfig=/var/lib/kubelet/kubeconfig \
   --reconcile-cidr=true \
   --serialize-image-pulls=false \
+  --pod-cidr={{ item }}
   --v=2 \
   --non-masquerade-cidr="10.240.0.0/16"
 

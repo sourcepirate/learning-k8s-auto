@@ -1,12 +1,18 @@
 
+- hosts: etcd  
+  sudo: true
+  roles:
+    - common
+    - etcd
+
 - hosts: masters
   sudo: true
   roles:
     - common
     - master
 
-# - hosts: etcd  
-#   sudo: true
-#   roles:
-#     - common
-#     - etcd
+- hosts: workers
+  sudo: true
+  roles:
+    - common
+    - worker
