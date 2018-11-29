@@ -22,14 +22,14 @@
 - name: download and unarchive etcd binary and uzip it.
   sudo: true
   unarchive:
-    src: "https://github.com/coreos/etcd/releases/download/v3.0.1/etcd-v3.0.1-linux-amd64.tar.gz"
+    src: "https://github.com/coreos/etcd/releases/download/v3.3.10/etcd-v3.3.10-linux-amd64.tar.gz"
     dest: /tmp/
     remote_src: yes
 
 - name: copy etcd binary
   sudo: true
   copy:
-    src: "/tmp/etcd-v3.0.1-linux-amd64/etcd"
+    src: "/tmp/etcd-v3.3.10-linux-amd64/etcd"
     dest: "/usr/bin/etcd"
     mode: "+x"
     remote_src: yes
@@ -37,7 +37,7 @@
 - name: copy etcd binary
   sudo: true
   copy:
-    src: "/tmp/etcd-v3.0.1-linux-amd64/etcdctl"
+    src: "/tmp/etcd-v3.3.10-linux-amd64/etcdctl"
     dest: "/usr/bin/etcdctl"
     remote_src: true
     mode: "+x"
