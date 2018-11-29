@@ -3,6 +3,8 @@
 The repo contains the code necessary to set up kubernetes cluster
 via ansible and terraform
 
+**Kubernete Version**: **1.12**
+
 ## Prerequisits
 
 * terraform
