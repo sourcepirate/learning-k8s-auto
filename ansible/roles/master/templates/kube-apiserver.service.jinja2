@@ -4,7 +4,7 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
 ExecStart=/usr/bin/kube-apiserver \
-  --admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota \
+  --admission-control="" \
   --advertise-address={{ internal_ip.stdout }} \
   --allow-privileged=true \
   --apiserver-count=1 \
