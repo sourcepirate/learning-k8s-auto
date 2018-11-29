@@ -47,9 +47,9 @@
   sudo: true
   get_url: url={{item}} dest=/usr/bin/ mode="+x"
   with_items:
-    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kubectl"
-    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kube-proxy"
-    - "https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kubelet"
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubectl"
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kube-proxy"
+    - "https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubelet"
 
 - name: apply kubelet template
   sudo: true
@@ -70,6 +70,7 @@
   template: src=kube-proxy.service.jinja2 dest=/etc/systemd/system/kube-proxy.service
 
 - name: enable and start kubelet service
+  sudo: true
   systemd: name={{ item.name }} state=started
   with_items: 
     - { name: "kubelet"}
